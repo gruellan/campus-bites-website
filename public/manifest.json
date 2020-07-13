@@ -1,0 +1,32 @@
+{
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "gcm_sender_id": "103953800507",
+  "icons": [
+    {
+      "purpose": "maskable",
+      "src": "icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "purpose": "maskable",
+      "src": "icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "purpose": "maskable",
+      "src": "icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "lang": "en-GB",
+  "name": "Campus Bites",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "Campus Bites",
+  "start_url": "/",
+  "theme_color": "#ff6d1d"
+}

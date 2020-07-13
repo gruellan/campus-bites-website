@@ -1,0 +1,28 @@
+{
+  "name": "campus-bites-functions",
+  "description": "Cloud Functions for Campus Bites",
+  "scripts": {
+    "lint": "eslint .",
+    "serve": "firebase serve --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions && sleep 30 && echo \"DONE\"",
+    "logs": "firebase functions:log"
+  },
+  "dependencies": {
+    "@google-cloud/logging": "^4.2.0",
+    "@sendgrid/mail": "^6.3.1",
+    "firebase-admin": "~6.0.0",
+    "firebase-functions": "^2.1.0",
+    "sendgrid": "^5.2.3",
+    "stripe": "^6.20.0"
+  },
+  "devDependencies": {
+    "eslint": "^4.12.0",
+    "eslint-plugin-promise": "^3.6.0"
+  },
+  "engines": {
+    "node": "8"
+  },
+  "private": true
+}

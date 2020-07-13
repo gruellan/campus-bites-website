@@ -1,0 +1,130 @@
+version: 2
+defaults: &defaults
+  working_directory: ~/campus-bites-vue
+  docker:
+    - image: circleci/node:10.15.1
+jobs:
+  build:
+    <<: *defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/campus-bites-vue
+      - restore_cache:
+          key: npm-{{ checksum "package-lock.json" }}
+      - run: npm install
+      - save_cache:
+          key: npm-{{ checksum "package-lock.json" }}
+          paths:
+            - ./node_modules
+      - run:
+          name: Set environment variables
+          command: |
+            echo "export SHA1=$(git rev-list --abbrev-commit --max-count=1 HEAD)" >> $BASH_ENV
+            echo "export NODE_ENV=${CIRCLE_BRANCH}" >> $BASH_ENV
+            echo "export ENVIRONMENT=$([[ $CIRCLE_BRANCH == rc-* ]] && echo "staging" || ([[ $CIRCLE_BRANCH == "develop" ]] && echo "development" || ([[ $CIRCLE_BRANCH == "master" ]] && echo "production" || echo "$CIRCLE_BRANCH" )))" >> $BASH_ENV
+            source $BASH_ENV
+            echo "VUE_APP_COMMIT_SHA1=${SHA1}" > .env.local
+            echo "VUE_APP_ENVIRONMENT=${ENVIRONMENT}" >> .env.local
+            echo "VUE_APP_BRANCH=${CIRCLE_BRANCH}" >> .env.local
+            echo "SHA1: ${SHA1}"
+            echo "ENVIRONMENT: ${ENVIRONMENT}"
+      - run: npm run build
+      - persist_to_workspace:
+          root: ~/campus-bites-vue
+          paths: .
+  sentry-release:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/campus-bites-vue
+      - run:
+          name: Set environment variables
+          command: |
+            echo "export SHA1=$(git rev-list --abbrev-commit --max-count=1 HEAD)" >> $BASH_ENV
+            echo "export NODE_ENV=${CIRCLE_BRANCH}" >> $BASH_ENV
+            echo "export ENVIRONMENT=$([[ $CIRCLE_BRANCH == rc-* ]] && echo "staging" || ([[ $CIRCLE_BRANCH == "develop" ]] && echo "development" || ([[ $CIRCLE_BRANCH == "master" ]] && echo "production" || echo "$CIRCLE_BRANCH" )))" >> $BASH_ENV
+            source $BASH_ENV
+            echo "SHA1: ${SHA1}"
+            echo "ENVIRONMENT: ${ENVIRONMENT}"
+      - run:
+          name: Install sentry-cli
+          command: curl -sL https://sentry.io/get-cli/ | bash
+      - run:
+          name: Create new Sentry release from latest commit SHA1
+          command: sentry-cli releases new $SHA1
+      - run:
+          name: Tell Sentry which environment we are deploying this release to
+          command: sentry-cli releases deploys $SHA1 new -e $ENVIRONMENT
+      - run:
+          name: Associate commits with the Sentry release
+          command: sentry-cli releases set-commits --auto $SHA1
+      - run:
+          name: Upload source maps to Sentry
+          command: sentry-cli releases files $SHA1 upload-sourcemaps --rewrite ./dist
+  deploy-development:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/campus-bites-vue
+      - run:
+          name: Deploy to development site
+          command: ./node_modules/.bin/firebase deploy --only hosting:development --token=$FIREBASE_DEPLOY_TOKEN --debug
+  deploy-staging:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/campus-bites-vue
+      - run:
+          name: Deploy to staging site
+          command: ./node_modules/.bin/firebase deploy --only hosting:staging --token=$FIREBASE_DEPLOY_TOKEN --debug
+  deploy-production:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/campus-bites-vue
+      - run:
+          name: Deploy to production
+          command: ./node_modules/.bin/firebase deploy --only hosting:production --token=$FIREBASE_DEPLOY_TOKEN --debug
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only:
+                - develop
+                - master
+                - /chore-.*/
+                - /docs-.*/
+                - /feat-.*/
+                - /fix-.*/
+                - /rc-.*/
+      - sentry-release:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - develop
+                - /rc-.*/
+                - master
+      - deploy-development:
+          requires:
+            - build
+          filters:
+            branches:
+              only: develop
+      - deploy-staging:
+          requires:
+            - build
+          filters:
+            branches:
+              only: /rc-.*/
+      - deploy-production:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master

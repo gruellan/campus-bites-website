@@ -1,0 +1,181 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "orders",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "restaurant",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "completedTime",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "orders",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "completedTime",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "restaurant",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "courierClaimTime",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "orders",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "completedTime",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "courier",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "orderTime",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "orders",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "completedTime",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "orderTime",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "orders",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "courier",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "orderTime",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "orders",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "courier",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "completedTime",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "orders",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "completedTime",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "courier",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "restaurant",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "orderTime",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "orders",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "courier",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "orderTime",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "orders",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "restaurant",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "orderTime",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "orders",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "user",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "orderTime",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "orders",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "restaurant",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "orderTime",
+          "order": "ASCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": [
+    {
+      "collectionGroup": "restaurants",
+      "fieldPath": "description",
+      "indexes": []
+    }
+  ]
+}

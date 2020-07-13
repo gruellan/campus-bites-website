@@ -1,0 +1,146 @@
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth.uid != null;
+    }
+
+    function hasPermissions() {
+      return isSignedIn() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.permissions != null;
+    }
+
+    function getPermissions() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.permissions;
+    }
+
+    function hasPermission(permission) {
+      return hasPermissions() && getPermissions()[permission] != false;
+    }
+
+    function isAdmin() {
+      return hasPermission('admin');
+    }
+
+    function isManager() {
+      return hasPermission('restaurant');
+    }
+
+    function isCourier() {
+      return hasPermission('courier');
+    }
+
+    function isManagerOfRestaurant(restaurantId) {
+      return hasPermissions() && getPermissions().restaurant == restaurantId;
+    }
+
+    match /colleges/{college} {
+      allow get, list: if true;
+
+      // TODO: validation (e.g. must have name, fee)
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /config/{page} {
+      allow read: if true;
+      // allow get: if true;
+      // allow list: if false;
+
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /notifications/{notification} {
+      allow get, list: if false;
+
+      allow create: if isAdmin();
+      allow update, delete: if false;
+    }
+
+    // TODO: allow customer to read their own order data
+    match /orders/{order} {
+      allow read: if isCourier() || isAdmin() || isManager();
+      allow write: if false;
+
+      match /events/{event} {
+        allow read: if isCourier() || isAdmin() || isManager();
+        allow write: if isCourier() || isAdmin() || isManager();
+      }
+    }
+
+    match /restaurants/{restaurantId} {
+      // All site visitors can get/list restaurants.
+      allow get, list: if true;
+
+      // Only site administrators can create and delete restaurants.
+      // TODO: validation (e.g. must have name)
+      allow create: if isAdmin();
+      allow delete: if isAdmin();
+
+      // Site administrators and the restaurant manager can update the restaurant.
+      allow update: if isAdmin() || isManagerOfRestaurant(restaurantId);
+
+      match /categories/{categoryId} {
+        allow get, list: if true;
+
+        // TODO: validation (e.g. must have name)
+        allow create, update: if isAdmin() || isManagerOfRestaurant(restaurantId);
+
+        // TODO: validation (e.g. no food-items in category)
+        allow delete: if isAdmin() || isManagerOfRestaurant(restaurantId);
+      }
+
+      match /food-items/{foodItemId} {
+        function validateFoodItem(foodItem) {
+          // Ensure food item has a name, price and category (which exists)
+          return foodItem.name is string
+              && foodItem.price is number
+              && exists(foodItem.category);
+        }
+
+        // All site visitors can get/list food items.
+        allow get, list: if true;
+
+        // Site administrators and the restaurant manager can create and update food items.
+        // (note: request.resource.data is the document state if the write were to be allowed)
+        allow create, update: if validateFoodItem(request.resource.data) && (isAdmin() || isManagerOfRestaurant(restaurantId));
+
+        // Site administrators and the restaurant manager can delete food items.
+        allow delete: if isAdmin() || isManagerOfRestaurant(restaurantId);
+      }
+    }
+
+    match /users/{userId} {
+      // Only the user or site administators can get a user.
+
+      // FIXME: We should alter the app so that couriers/managers do not need
+      //  to access user documents.
+      allow get: if request.auth.uid == userId || isAdmin() || isCourier() || isManager();
+
+      // Only site administrators can list users.
+      allow list: if isAdmin();
+
+      // No user can create or delete users, only cloud functions.
+      allow create, delete: if false;
+
+      allow update: if request.auth.uid == userId || isAdmin();
+
+      // TODO: validation (e.g. must have email)
+
+      match /charges/{chargeId} {
+        allow read, write: if request.auth.uid == userId;
+      }
+
+      match /sources/{sourceId} {
+        allow read, write: if request.auth.uid == userId;
+      }
+
+      match /tokens/{tokenId} {
+        allow read, write: if request.auth.uid == userId;
+
+        // TODO: validation (e.g. must have token prop)
+      }
+    }
+
+  }
+}

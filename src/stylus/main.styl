@@ -1,0 +1,58 @@
+@font-face
+  font-family 'Bison Regular'
+  font-style normal
+  src url(/fonts/Bison-Regular.ttf)
+
+@font-face
+  font-family 'Bison DemiBold'
+  font-style normal
+  src url(/fonts/Bison-DemiBold.ttf)
+
+@font-face
+  font-family 'Bison Bold'
+  font-style bold
+  src url(/fonts/Bison-Bold.ttf)
+
+@font-face
+  font-family 'Montserrat Regular'
+  font-style normal
+  src url(/fonts/Montserrat-Regular.ttf)
+
+@font-face
+  font-family 'Montserrat SemiBold'
+  font-style normal
+  src url(/fonts/Montserrat-SemiBold.ttf)
+
+@font-face
+  font-family 'Montserrat Medium'
+  font-style normal
+  src url(/fonts/Montserrat-Medium.ttf)
+
+@font-face
+  font-family 'Montserrat Bold'
+  font-style bold
+  src url(/fonts/Montserrat-Bold.ttf)
+
+/**
+ * Override vuetify styles
+ * (https://github.com/vuetifyjs/vuetify/blob/master/packages/vuetify/src/stylus/settings/_variables.styl)
+ * (https://github.com/vuetifyjs/vuetify/blob/master/packages/vuetify/src/stylus/elements/_typography.styl)
+ */
+$body-font-family = 'Montserrat', sans-serif
+$heading-font-family = 'Montserrat Bold', sans-serif
+$subheading-font-family = 'Montserrat SemiBold', sans-serif
+$headings = {
+  h1: { size: 112px, weight: 300, line-height: 1, letter-spacing: normal, font-family: $heading-font-family },
+  h2: { size: 56px, weight: 400, line-height: 1.35, letter-spacing: normal, font-family: $heading-font-family },
+  h3: { size: 45px, weight: 400, line-height: 48px, letter-spacing: normal, font-family: $heading-font-family },
+  h4: { size: 34px, weight: 400, line-height: 40px, letter-spacing: normal, font-family: $heading-font-family },
+  h5: { size: 24px, weight: 400, line-height: 32px, letter-spacing: normal, font-family: $subheading-font-family },
+  h6: { size: 20px, weight: 500, line-height: 1, letter-spacing: normal, font-family: $subheading-font-family },
+  subheading: { size: 16px, weight: 400 },
+  body-2: { size: 14px, weight: 500 },
+  body-1: { size: 14px, weight: 400 },
+  caption: { size: 12px, weight: 400 },
+  button: { size: 14px, weight: 500 }
+}
+
+@import '~vuetify/src/stylus/main'
