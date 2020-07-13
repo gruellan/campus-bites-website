@@ -3,6 +3,9 @@
 ## Information
 This is the website that powered Campus Bites, an on-campus food delivery service at Lancaster University. Since we have stopped this service, we are publishing the code. Feel free to download it, run it, play around with it or even build on top of it! It is written in VueJS and uses Firebase for backend capabilities such as Hosting, Cloud Functions and Databases.
 
+## Live Demo
+If you want to see the site in action, visit https://campus-bites-ltd.web.app/
+
 ### Project setup
 1. Download node modules using `yarn`
 2. Add firebase config details to src/config/config.js and src/config/config.production.js
